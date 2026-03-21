@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ProductImage {
+  Id        Int     @id @default(autoincrement())
+  productId Int
+  imageUrl  String
+
+  product   Products @relation(fields: [productId], references: [Id], onDelete: Cascade)
+}
+
+model ProductColor {
+  Id        Int     @id @default(autoincrement())
+  productId Int
+  color     String
+
+  images    ColorImage[]
+
+  product   Products @relation(fields: [productId], references: [Id], onDelete: Cascade)
+}
+
+model ColorImage {
+  Id       Int     @id @default(autoincrement())
+  colorId  Int
+  imageUrl String
+
+  color    ProductColor @relation(fields: [colorId], references: [Id], onDelete: Cascade)
+}
+
+model Products {
+ Id          Int      @id @default(autoincrement())
+  Name        String
+  Category    String
+  Price       Float
+  SalePrice   Float?
+  Quantity    Int
+  Description String
+  Status      String
+  IsFeatured  Boolean  @default(false)
+
+  images      ProductImage[]
+  colors      ProductColor[]
+  createdAt   DateTime @default(now())
+}
+
+model Login{
+  Id              Int    @id @default(autoincrement())
+  email           String  @unique
+  password        String
+  profile         String
+  First_Name      String
+  Last_Name       String
+  Bio             String
+  phone           String
+  Address         String
+}
+
+model Category {
+ 
+  Id          Int      @id @default(autoincrement())
+  Name        String
+  Description    String
+  createdAt   DateTime @default(now())
+}

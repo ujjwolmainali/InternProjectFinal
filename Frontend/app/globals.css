@@ -1,0 +1,49 @@
+@import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
+
+/* Hide scrollbar but allow scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE & Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.custom-toast{
+  max-width: 200px;
+  padding: 10px;
+
+}
+
+.ck-content ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+}
+
+.ck-content ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+}
+
+.ck-content strong {
+  font-weight: 600;
+}
+
+.ck-content em {
+  font-style: italic;
+}
+
+.ck-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.ck-content h3 {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+
+
