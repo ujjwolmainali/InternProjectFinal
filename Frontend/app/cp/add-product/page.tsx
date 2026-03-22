@@ -5,6 +5,7 @@ import Editor from '@/app/components/Editor';
 import api from '@/app/lib/axios';
 import { toast } from 'react-toastify';
 import Breadcrumb from '@/app/components/Breadcrum';
+import { useRouter } from 'next/navigation';
 
 // Mock Editor component
 
@@ -26,6 +27,7 @@ interface ProductFormData {
 }
 
 export default function ProductForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState<ProductFormData>({
     productName: '',
     category: 'Electronics',
@@ -165,7 +167,8 @@ export default function ProductForm() {
     });
 
     toast.success(res.data.message || "Product added successfully");
-    handleClear()
+    handleClear();
+    router.push('/cp/product');
   } catch (err: any) {
     console.error(err);
     toast.error(err.response?.data?.message || "Failed to add product");

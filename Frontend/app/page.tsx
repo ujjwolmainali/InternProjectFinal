@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, Lock, Mail, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { toast } from "react-toastify";
 import api from "@/app/lib/axios";
 
@@ -193,6 +194,13 @@ const handleSubmit = async (e: React.FormEvent) => {
                 )}
               </button>
             </form>
+
+            <p className="text-center text-sm text-gray-500 mt-6">
+              Don&apos;t have an account?{' '}
+              <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-medium transition">
+                Sign up
+              </Link>
+            </p>
           </div>
         </div>
       </div>

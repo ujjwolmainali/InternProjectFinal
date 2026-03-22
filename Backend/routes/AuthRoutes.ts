@@ -40,7 +40,7 @@ Authrouter.post("/signup", async (req, res) => {
       data: {
         email,
         password: hashedPassword,
-        profile: "uploads\\profile\\P_image.png",
+        profile: "uploads/profile/P_image.png",
         First_Name,
         Last_Name,
         Bio: "Admin",
@@ -213,7 +213,11 @@ Authrouter.put(
         select: { profile: true },
       });
 
-      let profilePath = existingUser?.profile;
+      if (!existingUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      let profilePath = existingUser.profile;
 
       // Handle new image
       if (req.file) {

@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -13,8 +10,10 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─── Product Models ─────────────────────────────────────────────────────────
+
 model ProductImage {
-  Id        Int     @id @default(autoincrement())
+  Id        Int      @id @default(autoincrement())
   productId Int
   imageUrl  String
 
@@ -22,17 +21,16 @@ model ProductImage {
 }
 
 model ProductColor {
-  Id        Int     @id @default(autoincrement())
+  Id        Int    @id @default(autoincrement())
   productId Int
   color     String
 
   images    ColorImage[]
-
-  product   Products @relation(fields: [productId], references: [Id], onDelete: Cascade)
+  product   Products     @relation(fields: [productId], references: [Id], onDelete: Cascade)
 }
 
 model ColorImage {
-  Id       Int     @id @default(autoincrement())
+  Id       Int    @id @default(autoincrement())
   colorId  Int
   imageUrl String
 
@@ -40,7 +38,7 @@ model ColorImage {
 }
 
 model Products {
- Id          Int      @id @default(autoincrement())
+  Id          Int      @id @default(autoincrement())
   Name        String
   Category    String
   Price       Float
@@ -49,28 +47,114 @@ model Products {
   Description String
   Status      String
   IsFeatured  Boolean  @default(false)
+  Sku         String?
 
   images      ProductImage[]
   colors      ProductColor[]
+  orderItems  OrderItem[]
   createdAt   DateTime @default(now())
 }
 
-model Login{
-  Id              Int    @id @default(autoincrement())
-  email           String  @unique
-  password        String
-  profile         String
-  First_Name      String
-  Last_Name       String
-  Bio             String
-  phone           String
-  Address         String
+model Login {
+  Id         Int     @id @default(autoincrement())
+  email      String  @unique
+  password   String
+  profile    String?
+  First_Name String?
+  Last_Name  String?
+  Bio        String?
+  phone      String?
+  Address    String?
+  role       String  @default("admin") // admin, cashier, manager
 }
 
 model Category {
- 
   Id          Int      @id @default(autoincrement())
   Name        String
-  Description    String
+  Description String
   createdAt   DateTime @default(now())
+}
+
+// ─── Customer Models ─────────────────────────────────────────────────────────
+
+model Customer {
+  Id        Int      @id @default(autoincrement())
+  name      String
+  email     String?  @unique
+  phone     String?
+  address   String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+}
+
+// ─── Order Models ─────────────────────────────────────────────────────────────
+
+model Order {
+  Id             Int         @id @default(autoincrement())
+  orderNumber    String      @unique
+  customerId     Int?
+  customer       Customer?   @relation(fields: [customerId], references: [Id])
+  customerName   String      @default("Guest")
+  orderType      String      @default("In-Store") // In-Store, Online, Pickup
+  status         String      @default("completed") // pending, completed, cancelled, refunded
+  paymentMethod  String      @default("Cash") // Cash, Card, QR
+  paymentStatus  String      @default("paid") // paid, pending, failed
+  subtotal       Float
+  taxAmount      Float
+  discountAmount Float       @default(0)
+  discountCode   String?
+  total          Float
+  notes          String?
+  cashReceived   Float?
+  changeGiven    Float?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  items          OrderItem[]
+}
+
+model OrderItem {
+  Id          Int      @id @default(autoincrement())
+  orderId     Int
+  order       Order    @relation(fields: [orderId], references: [Id], onDelete: Cascade)
+  productId   Int?
+  product     Products? @relation(fields: [productId], references: [Id])
+  productName String
+  price       Float
+  quantity    Int
+  subtotal    Float
+}
+
+// ─── Discount Models ─────────────────────────────────────────────────────────
+
+model Discount {
+  Id        Int       @id @default(autoincrement())
+  code      String    @unique
+  type      String    // percentage, fixed
+  value     Float
+  minOrder  Float?
+  maxUses   Int?
+  usedCount Int       @default(0)
+  isActive  Boolean   @default(true)
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+}
+
+// ─── Store Settings ──────────────────────────────────────────────────────────
+
+model StoreSettings {
+  Id            Int      @id @default(autoincrement())
+  storeName     String   @default("My Store")
+  storeAddress  String   @default("")
+  storePhone    String   @default("")
+  storeEmail    String   @default("")
+  currency      String   @default("USD")
+  taxRate       Float    @default(8)
+  taxEnabled    Boolean  @default(true)
+  receiptFooter String   @default("Thank you for your purchase!")
+  logo          String   @default("")
+  updatedAt     DateTime @updatedAt
 }
